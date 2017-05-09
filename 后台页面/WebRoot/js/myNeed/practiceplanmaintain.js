@@ -152,12 +152,7 @@ $(document)
 											"orderable" : true,
 											"sDefaultContent" : "",
 											//"sWidth" : "3%"
-										}, {
-											"mData" : "selectedCount",// 已选人数
-											"orderable" : true,
-											"sDefaultContent" : "",
-											//"sWidth" : "3%"
-										}, {
+										},{
 											"mData" : "composition",// 教学班组成
 											"orderable" : false,
 											"sDefaultContent" : "",
@@ -339,11 +334,7 @@ $(document)
 										"orderable" : true,
 										"sDefaultContent" : "",
 										"sWidth" : "6%"
-									}, {
-										"mData" : "selectedCount",// 已选人数
-										"orderable" : true,
-										"sDefaultContent" : "",
-									}, {
+									},{
 										"mData" : "composition",// 教学班组成
 										"orderable" : false,
 										"sDefaultContent" : "",
@@ -489,11 +480,7 @@ $(document)
 										"orderable" : true,
 										"sDefaultContent" : "",
 										"sWidth" : "6%"
-									}, {
-										"mData" : "selectedCount",// 已选人数
-										"orderable" : true,
-										"sDefaultContent" : "",
-									}, {
+									},{
 										"mData" : "composition",// 教学班组成
 										"orderable" : false,
 										"sDefaultContent" : "",
@@ -1346,6 +1333,7 @@ $(document)
                         	   return;
                            }
                            userWarn=[];
+                           var checkSearchValue=table.search();//获取table的模糊查询框的输入值
 										table = $("#practiceplanmaintain").DataTable(
 														{
 															"processing" : true,
@@ -1363,7 +1351,7 @@ $(document)
 																"url" : "checkIsSave.do",
 																"type" : "POST",
 																"data" : {
-																	"semester" : str
+																	"semester" : str																	
 																}
 															},
 															"aoColumns" : [
@@ -1393,12 +1381,7 @@ $(document)
 																		"mData" : "count",// 人数
 																		"orderable" : true,
 																		"sDefaultContent" : ""
-																	},
-																	{
-																		"mData" : "selectedCount",// 已选人数
-																		"orderable" : true,
-																		"sDefaultContent" : "",
-																	},
+																	},																	
 																	{
 																		"mData" : "composition",// 教学班组成
 																		"orderable" : false,
@@ -1487,7 +1470,10 @@ $(document)
 																	"sLast" : " 尾页 "
 																}
 															}
-														});
+														});	
+										if(checkSearchValue!=""&&checkSearchValue!=null){
+											table.search(checkSearchValue).draw(false);
+										}
 										flag = 1;
 										$("#remind").prop("hidden", false);
 									});
@@ -1750,7 +1736,8 @@ $(document)
 								$("#table tbody:last-child").find("#class_one_option").after(
 										"<option value="+data_composition[composition_0]+">"+ data_composition[composition_0] + "</option>"
 										);
-							}	
+							}
+							var site=data[i].site;
 							$.ajax({
 								type : 'POST',
 								dataType : 'json',		
@@ -1774,11 +1761,14 @@ $(document)
 										"<option class='rest' value="+date[0][i].name+">"+ date[0][i].name+ "</option>"
 										);
 									}
-									for(var j=0;j<date[1].length;j++){//获取基地名字
-										$("#table tbody:last-child").find("#schoolBaseID").after(
-										"<option class='rest' value="+date[1][j]+">"+ date[1][j] + "</option>"
-										);
-									}
+									$("#table tbody:last-child").find("#schoolBase").select2({
+										  data:date[1] ,
+										  placeholder:site,
+										  allowClear:false,
+										  width:100,
+										  dropdownAutoWidth:true
+										});
+									
 									
 									for(var t=0;t<date[2].length;t++){//获取实习目的下拉框
 										$("#table tbody:last-child").find("#aimID").after(
@@ -1887,7 +1877,7 @@ $(document)
 					selectObj.val("");
 					selectObj.find("option:gt(0)").remove();
 					aObj.css("display","none");
-					
+					var that=$(this);
 					if(type!=''){	
 						$.ajax({
 							type : 'POST',
@@ -1905,15 +1895,19 @@ $(document)
 							success : function(data){
 								if(data.length==0){
 									aObj.css("display","block");
+									$(".select2").css("display","none");
 									return;
 								}else{
+								that.parent().next().children("select").select2({
+										  data: data,
+										  placeholder:'请选择',
+										  allowClear:false,
+										  width:100,
+										  dropdownAutoWidth:true
+									});
 									
-								for(var j=0;j<data.length;j++){//获取基地名字
-									selectObj.find("#schoolBaseID").after(
-									"<option class='rest' value="+data[j]+">"+ data[j] + "</option>"
-									);
-								}
 								selectObj.show();
+								
 								
 								}
 							}
