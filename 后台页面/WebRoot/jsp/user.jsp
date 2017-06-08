@@ -142,7 +142,7 @@
 								</li>
 
 								<li class="menuItem nav-parent"
-									${(visitRight[3]==0&&visitRight[4]==0&&visitRight[5]==0&&visitRight[6]==0&&visitRight[7]==0&&visitRight[8]==0&&visitRight[9]==0&&visitRight[10]==0&&visitRight[11]==0)?"style='display:none;'":" "}>
+									${(visitRight[3]==0&&visitRight[4]==0&&visitRight[5]==0&&visitRight[6]==0&&visitRight[7]==0&&visitRight[8]==0&&visitRight[9]==0&&visitRight[10]==0&&visitRight[11]==0&&visitRight[13]==0)?"style='display:none;'":" "}>
 									<a> <i class="icon-copy" aria-hidden="true"></i><span>数据管理</span>
 								</a>
 									<ul class="nav nav-children">
@@ -155,6 +155,8 @@
 													土地租赁维护</span></a></li>
 										<li ${visitRight[5]==0?"style='display:none;'":" "}><a
 											href="baseMaintain.jsp"><span class="text"> 实习基地维护</span></a></li>
+										<li ${visitRight[13]==0?"style='display:none;'":" "}><a
+											href="Professionalmanage.jsp"><span class="text"> 实习专业维护</span></a></li>
 										<li ${visitRight[11]==0?"style='display:none;'":" "}><a
 											href="Repairmanage.jsp"><span class="text"> 报修信息维护</span></a></li>
 										<li ${visitRight[7]==0?"style='display:none;'":" "}><a
@@ -219,7 +221,7 @@
 				<div class="row form">
 
 					<form action="Userupdata.do" method="post" role="form"
-						id="userform" enctype="multipart/form-data">
+						id="userform" enctype="multipart/form-data" >
 
 						<div
 							class="col-md-6  col-md-offset-2 form-group xgarea form-horizontal">
@@ -243,7 +245,7 @@
 								<label for="inputEmail3" class="col-sm-2 control-label">密码修改</label>
 								<div class="col-sm-8">
 									<input type="password" class="form-control" id="possword"
-										name="possword">
+										name="possword"  >
 								</div>
 							</div>
 
@@ -251,12 +253,12 @@
 								<label for="inputEmail3" class="col-sm-2 control-label">确认密码</label>
 								<div class="col-sm-8">
 									<input type="password" class="form-control" id="repossword"
-										onBlur="password()">
+										>
 								</div>
 							</div>
 							<div class="form-group jianju">
 								<div class="col-sm-offset-5 col-sm-5" id="lastxg">
-									<button type="submit" class="btn btn-success" id="submit">确认修改</button>
+									<button type="button" class="btn btn-success" id="submitUpdate">确认修改</button>
 									<button type="reset" class="btn btn-danger">重置</button>
 								</div>
 							</div>
@@ -317,6 +319,7 @@
     <![endif]-->
 	<script src="../js/jquery.min.js"></script>
 	<script src="../js/bootstrap.min.js"></script>
+	<script src="../js/bootbox.min.js"></script>
 	<script src="../dist/jquery.cokie.min.js"></script>
 	<script src="../js/kg.js"></script>
 	<script src="../js/user.js"></script>

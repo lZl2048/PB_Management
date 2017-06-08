@@ -213,12 +213,12 @@ $(document).ready(function() {
 	 +'</tr>'
 	 +'<tr>'
 	 +'<td rowspan="5"><sapn class="mark"></span></td>'
-	 +'<td style="padding-top:5px"><select id="weekend" type="text" class="text-center  flag"><option value="" id="weekend_option">请选择</select></td>'
-	 +'<td style="padding-top:5px"><select id="class_one" type="text" class="text-center flag"><option value="" id="class_one_option">请选择</select></td>'
+	 +'<td style="padding-top:5px"><div id="divweek"><input id="weekend" type="text" class="text-center inputWidth flag Showweekend"><div class="showWeek"><ul id="ul1"></ul><button type="button" class="btn btn-info btn-xs Dweek">清空</button><button type="button" class="btn btn-info btn-xs Sweek">确定</button></div><div></td>'
+	 +'<td style="padding-top:5px"><div id="divgrade"><input id="class_one" type="text" class="text-center inputWidth flag Showgrade"><div class="showGrade"><ul id="ul2"></ul><button type="button" class="btn btn-info btn-xs Dgrade">清空</button><button type="button" class="btn btn-info btn-xs Sgrade">确定</button></div><div></td>'
 	 +'<td style="padding-top:5px"><input id="startweek" type="text"  readonly="readonly" class="flag startweek"></td>'
 	 +'<td style="padding-top:5px"><input id="endweek" type="text" readonly="readonly" class="flag endweek"></td>'
 	 +'<td style="padding-top:5px"><select name="" id="baseFrom" class="flag"><option id="baseForm" value="">请选择</option></select></td>'
-	 +'<td style="padding-top:5px" id="practicePlace"><select id="schoolBase" class="flag" style="display:none;"><option id="schoolBaseID" value="">请选择</option></select><a class="btn btn-primary btn-sm" href="baseApply.jsp" style="display:none;">添加基地</a></td>'
+	 +'<td style="padding-top:5px" id="practicePlace"><select id="schoolBase" class="flag" style="display:none;"><option id="schoolBaseID" value="">请选择</option></select><a class="btn btn-primary btn-sm" href="baseApply.jsp" style="display:none;">添加基地</a><input class="text-center" type="text" value="分散实习基地" style="display:none;"></td>'
 	 +'<td style="padding-top:5px"><select id="category" class="flag"><option value="">请选择</option><option value="生产实习">生产实习</option><option value="教学实习">教学实习</option><option value="毕业实习">毕业实习</option><option value="综合实习">综合实习</option></select></td>'
 	 +'<td style="padding-top:5px"><select name="" id="practiceClass" class="flag"><option value="">请选择</option><option value="集中">集中</option><option value="分散">分散</option></select></td>'
 	 +'<td style="padding-top:5px"><input id="remark" type="text" class="flag"></td>'
@@ -307,19 +307,29 @@ $("#practiceapplytable tbody").on("click","tr",function(){
 			var teachername="";
 			var testername="";
 			var majorname="";
+			if(screen.width<=1536&&data.length>1){
+				$("#modalbody").addClass("modalbody");
+			}
+			if(screen.width<=1708&&screen.width>1536&&data.length>3){
+				$("#modalbody").addClass("modalbody2");
+			}
+			if(screen.width>1708&&data.length>3){
+				$("#modalbody").addClass("modalbody3");
+			}
 			for(var i=0;i<data.length;i++){
 				$("#table tbody:last-child").after(tbodyStyle);
-				for(var week in data_week){
-					$("#table tbody:last-child").find("#weekend_option").after(
-							"<option value="+data_week[week]+">"+ data_week[week] + "</option>"
-							);
-				}	
-				for(var composition_0 in data_composition){
-					$("#table tbody:last-child").find("#class_one_option").after(
-							"<option value="+data_composition[composition_0]+">"+ data_composition[composition_0] + "</option>"
-							);
-				}	
+				for(var j=0;j<data_week.length;j++){
+					$("#table tbody:last-child").find("#ul1").append(
+					"<li value="+data_week[j]+">"+ data_week[j]+ "</li>"
+					);
+				}
+				for(var k=0;k<data_composition.length;k++){
+					$("#table tbody:last-child").find("#ul2").append(
+					"<li value="+data_composition[k]+">"+ data_composition[k]+ "</li>"
+					);
+				}
 				var site=data[i].site;
+				var source=data[i].source;
 				$.ajax({
 					type : 'POST',
 					dataType : 'json',		
@@ -328,7 +338,7 @@ $("#practiceapplytable tbody").on("click","tr",function(){
 					cache : false,
 					data:{
 						"mid":obj[Oneindex].tid,
-						"typename":data[i].source
+						"typename":source
 					},
 					error : function(request) {
 						bootbox.alert({
@@ -352,14 +362,6 @@ $("#practiceapplytable tbody").on("click","tr",function(){
 							"<option class='rest' value="+date[0][i].name+">"+ date[0][i].name+ "</option>"
 							);
 						}
-					/*	for(var j=0;j<date[1].length;j++){//获取基地名字
-							$("#table tbody:last-child").find("#schoolBaseID").after(
-							"<option class='rest' value="+date[1][j]+">"+ date[1][j] + "</option>"
-							);
-						}*/
-						
-						
-						
 						for(var t=0;t<date[2].length;t++){//获取实习目的下拉框
 							$("#table tbody:last-child").find("#aimID").after(
 									"<option class='rest' id="+date[2][t].id+" value="+date[2][t].aim+" data-placement='top' data-toggle='tooltip' title='"+date[2][t].aim+"'>"+ (date[2][t].aim.length>20?date[2][t].aim.substring(0,20)+"...":date[2][t].aim )+ "</option>"
@@ -463,11 +465,21 @@ $(document).on("change","#baseFrom",function(e){
 	var type=e.target.value;
 	var selectObj=$(this).parent().next().children("select");
 	var aObj=$(this).parent().next().children("a");
+	var aObj2=$(this).parent().next().children("input");
 	selectObj.hide();
 	selectObj.val("");
 	selectObj.find("option:gt(0)").remove();
 	aObj.css("display","none");
+	aObj2.css("display","none");
 	var that=$(this);
+	
+	if(type == "分散实习基地"){
+		aObj2.css("display","block");
+		$(".select2").css("display","none");
+		return;
+	}
+
+	
 	if(type!=''){	
 		$.ajax({
 			type : 'POST',
@@ -483,7 +495,7 @@ $(document).on("change","#baseFrom",function(e){
 				});
 			},
 			success : function(data){
-				if(data.length==0){
+				if(data.length==0 && type !== "分散实习基地"){
 					aObj.css("display","block");
 					$(".select2").css("display","none");
 					return;
@@ -522,7 +534,7 @@ $(document).on("change","#selectCollege",function(){
 			"college" : college,								
 		},
 	success : function(data){
-		obj2=data;//用于下面函数里面的判断
+		obj2=data;//用于下面函数里面的判断	
 		for(var i=0;i<data.length;i++){//获取老师名字下拉框
 			$("#teacherNmaeID").after(
 			"<option class='rest' value="+data[i].name+">"+ data[i].name + "</option>"
@@ -563,7 +575,6 @@ $(document).on("change","#selectCollege2",function(){
 			"college" : college,								
 		},
 	success : function(data){
-		
 		for(var i=0;i<data.length;i++){//获取老师名字下拉框
 			$("#teacherNmaeID2").after(
 			"<option class='rest' value="+data[i].name+">"+ data[i].name + "</option>"
@@ -743,21 +754,21 @@ $(document).on("click","#addTbody",function(){//添加一条空表的记录
 		}
 	}
 	$.unique(data_week.sort(sortNumber));
-	for(var week in data_week){
-		$("#table tbody:last-child").find("#weekend_option").after(
-				"<option value="+data_week[week]+">"+ data_week[week] + "</option>"
-				);
-	}	
-	
+	for(var i=0;i<data_week.length;i++){
+		$("#table tbody:last-child").find("#ul1").append(
+		"<li value="+data_week[i]+">"+ data_week[i]+ "</li>"
+		);
+	}
 	//获得班级的数组
 	var composition=$("#class").val();
 	var data_composition=composition.split(',');
 	$.unique(data_composition.sort(sortNumber));
-	for(var composition_0 in data_composition){
-		$("#table tbody:last-child").find("#class_one_option").after(
-				"<option value="+data_composition[composition_0]+">"+ data_composition[composition_0] + "</option>"
-				);
-	}	
+	for(var i=0;i<data_composition.length;i++){
+		$("#table tbody:last-child").find("#ul2").append(
+		"<li value="+data_composition[i]+">"+ data_composition[i]+ "</li>"
+		);
+	}
+
 	
 	var tbNum=$("#table").children('tbody').length;
 	$("#table tbody:last-child").find(".mark").html(tbNum-2);
@@ -787,7 +798,109 @@ $(document).on("click","#addTbody",function(){//添加一条空表的记录
 	}
 });
 });
+var weekNum;
+var weekstr="";
+$(document).on("focus","#weekend",function(){
+	gradestr="";
+	weekstr="";
+	$(".showGrade").hide();
+	$(".showWeek").hide();
+	$("li").removeClass("libg1");
+	weekNum=$(this).closest("tbody").find(".mark").html()-1;
+	
+	var w=0;
+	$(".showWeek").each(function(){
+		if(w===weekNum){
+			$(this).show();
+		return false;
+		}
+		w++;
+	});
+});	
+$(document).on("click","li",function(){
+	
+	if($(this).hasClass("libg1")){
+		$(this).removeClass("libg1");
+	}else{
+		$(this).addClass("libg1");
+	}
+});
 
+$(document).on("click",".Sweek",function(){
+	var s=0;
+	$(".libg1").each(function(){
+		weekstr=weekstr+" "+$(this).html();
+	});
+	$(".Showweekend").each(function(){
+		if(s===weekNum){
+			$(this).val(weekstr);
+		return false;
+		}
+		s++;
+	});
+	$(".showWeek").hide();
+});
+$(document).on("click",".Dweek",function(){	
+	var l=0;
+	$(".Showweekend").each(function(){
+		if(l===weekNum){
+			$(this).val("");
+		return false;
+		}
+		l++;
+	});
+});
+
+var gradeNum;
+var gradestr="";
+$(document).on("focus","#class_one",function(){
+	gradestr="";
+	weekstr="";
+	$(".showGrade").hide();
+	$(".showWeek").hide();
+	$("li").removeClass("libg1 libg2");
+	gradeNum=$(this).closest("tbody").find(".mark").html()-1;
+	var w=0;
+	$(".showGrade").each(function(){
+		if(w===gradeNum){
+			$(this).show();
+		return false;
+		}
+		w++;
+	});
+});		
+$(document).on("click","li",function(){
+	
+	if($(this).hasClass("libg1 libg2")){
+		$(this).removeClass("libg1 libg2");
+	}else{
+		$(this).addClass("libg1 libg2");
+	}
+});
+$(document).on("click",".Sgrade",function(){
+	var s=0;
+	$(".libg2").each(function(){
+		gradestr=gradestr+" "+$(this).html();
+	});
+	$(".Showgrade").each(function(){
+		if(s===gradeNum){
+			$(this).val(gradestr);
+		return false;
+		}
+		s++;
+	});
+	$(".showGrade").hide();
+});
+$(document).on("click",".Dgrade",function(){	
+	var l=0;
+	$(".Showgrade").each(function(){
+		if(l===gradeNum){
+			$(this).val("");
+		return false;
+		}
+		l++;
+	});
+});
 /*$(document).on("show.bs.tooltip","[data-toggle=tooltip]",function(){
 	//alert("yes");
 	m_tooltip.SetMaxTipWidth(600);
@@ -1109,7 +1222,7 @@ $("#save").click(function(){//弹出框的保存
 								if($(this).val()===""){
 								str=str+','+"null";
 								}else{
-									str=str+","+$(this).val();
+									str=str+",'"+$(this).val()+"'";
 								}
 							}
 							if(x<=10&&x>1){
